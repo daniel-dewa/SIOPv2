@@ -11,11 +11,16 @@ jobs:
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v3
-          - name: Run the build process with Docker
+          - name: Build html document using mmark and xml2rfc
             run: |     
-                docker run \
-                -v /${{ github.workspace }}:/data danielfett/markdown2rfc \
-                openid-connect-self-issued-v2-1_0.md
+                docker run --rm \
+                  -v /${{ github.workspace }}:/data \
+                  ghcr.io/daniel-dewa/mmark:latest \
+                  openid-connect-self-issued-v2-1_0.md > openid-connect-self-issued-v2-1_0.xml
+                docker run --rm \
+                  -v /${{ github.workspace }}:/data \
+                  ghcr.io/daniel-dewa/xml2rfc-slim:v3.31.0 \
+                  --html openid-connect-self-issued-v2-1_0.xml
           - name: rename
             run: |
                 mv ./openid-connect-self-issued-v2-1_0*.html ./openid-connect-self-issued-v2-wg-draft.html      
